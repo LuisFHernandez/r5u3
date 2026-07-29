@@ -1,6 +1,6 @@
 const API_KEY = 'b78fc90cc378dc38bcbb02ee608ac941'; 
 const API_URL = `https://gnews.io/api/v4/top-headlines?category=general&lang=es&apikey=${API_KEY}`;
-
+const PROXY_URL = 'https://corsproxy.io/?' + encodeURIComponent(API_URL);
 const newsContainer = document.getElementById('news-container');
 const refreshBtn = document.getElementById('refresh-btn');
 
