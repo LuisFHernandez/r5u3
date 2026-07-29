@@ -8,7 +8,7 @@ async function fetchNews() {
     newsContainer.innerHTML = '<div class="status-message">Cargando las últimas noticias...</div>';
 
     try {
-        const response = await fetch(API_URL);
+        const response = await fetch(PROXY_URL);
 
         if (!response.ok) {
             throw new Error(`Error en el servidor: ${response.status} ${response.statusText}`);
