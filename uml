@@ -1,0 +1,41 @@
+@startuml
+skinparam style strictuml
+skinparam DefaultFontName Arial
+skinparam sequence {
+    ParticipantBorderColor #333333
+    ParticipantBackgroundColor #E2E2F0
+}
+
+actor "Usuario\n(Cliente/Empleado)" as User
+participant "Frontend\n(App/Web)" as Front
+participant "API Gateway\n(Enrutador)" as API
+participant "Servicio de\nAutenticación" as Auth
+participant "Servicio de\nCursos" as Cursos
+database "Base de Datos\nCursos" as DBC
+
+== Proceso de Autenticación ==
+User -> Front: Ingresa credenciales (Login)
+Front -> API: POST /login
+API -> Auth: Validar usuario y contraseña
+Auth --> API: Genera Token JWT (Incluye el Rol)
+API --> Front: Retorna Token JWT al cliente
+
+== Proceso de Acceso a Contenido (Control de Roles) ==
+User -> Front: Solicita ver catálogo de cursos
+Front -> API: GET /cursos (Envía Token JWT)
+API -> API: Valida Token y extrae Rol
+API -> Cursos: GET /cursos (Rol extraído)
+
+alt Rol == Empleado o Administrador
+    Cursos -> DBC: Consulta todos los cursos
+    DBC --> Cursos: Retorna TODOS (Generales + Entrenamiento)
+    Cursos --> API: Respuesta JSON con catálogo completo
+else Rol == Cliente
+    Cursos -> DBC: Consulta solo cursos públicos
+    DBC --> Cursos: Retorna SOLO cursos generales
+    Cursos --> API: Respuesta JSON parcial (Sin entrenamiento)
+end
+
+API --> Front: Retorna los datos solicitados
+Front --> User: Muestra cursos permitidos en pantalla
+@enduml
